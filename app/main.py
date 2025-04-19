@@ -1,15 +1,23 @@
 import os
 from openai import OpenAI
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 
 from .utils import format_travel_response
 from .models import ChatRequest, ChatResponse
 from dotenv import load_dotenv
 
-load_dotenv()
-client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"),)
+from .utils import rate_limiter
 
+import logging
+import redis
+
+# Set up logging
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
+
+load_dotenv()
+client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY",""))
 
 app = FastAPI()
 
@@ -31,7 +39,8 @@ def health():
 
 
 @app.post("/api/chat", response_model=ChatResponse)
-async def chat(request: ChatRequest):
+@rate_limiter(max_calls=1, time_frame=20)
+async def chat(request: Request,payload: ChatRequest):
     """ chat endpoint.
     Body:
         Request: ChatRequest
@@ -40,20 +49,20 @@ async def chat(request: ChatRequest):
     Returns :
         formated message
     """
-    if not request.messages:
+    if not payload.messages:
         raise HTTPException(status_code=400, detail="No messages provided")
 
     try:
         messages = [
-            {"role": msg.role, "content": msg.content} for msg in request.messages
+            {"role": msg.role, "content": msg.content} for msg in payload.messages
         ]
 
         system_prompt = {
             "role": "system",
             "content": (
-                "You are a helpful travel assistant. For travel-related queries, provide clear, "
-                "concise answers including passport requirements, visa requirements, additional documents "
-                "and any other relevant information like: proof of accommodation, proof of sufficient funds, "
+                "You are a helpful travel assistant. For travel-related queries, provide clear, concise answers "
+                "including passport requirements, visa requirements, additional information and any other related travel advisory "
+                "proof of accommodation, proof of sufficient funds, "
                 "return ticket, travel insurance, and COVID-19 restrictions. Format your response in a structured way possible."
             )
         }
