@@ -66,13 +66,10 @@ async def chat(request: ChatRequest):
             temperature=0.7,
         )
 
-        print(response.choices[0].message.content.split("\n\n"))
 
         reply = response.choices[0].message.content.strip()
 
         formatted_reply = format_travel_response(reply)
-
-        print(formatted_reply)
 
         return ChatResponse(reply=formatted_reply)
 
