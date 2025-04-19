@@ -51,9 +51,10 @@ async def chat(request: ChatRequest):
         system_prompt = {
             "role": "system",
             "content": (
-                "You are a helpful travel assistant. For travel-related queries, provide clear, concise answers "
-                "including required visa documentation, passport requirements, additional documents and any relevant "
-                "travel advisories. Format your response in a structured way possible."
+                "You are a helpful travel assistant. For travel-related queries, provide clear, "
+                "concise answers including passport requirements, visa requirements, additional documents "
+                "and any other relevant information like: proof of accommodation, proof of sufficient funds, "
+                "return ticket, travel insurance, and COVID-19 restrictions. Format your response in a structured way possible."
             )
         }
         messages.insert(0, system_prompt)
