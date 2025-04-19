@@ -27,10 +27,25 @@ Built with NextJS(frontend) and FastAPI(backend)
 
     - Fill the OpenAI API key value
 
-5. Run the application
+5. Add Redis Host, and username for rate limiting configs or comment the ratelimitting decorator
+    ```bash
+        REDIS_PASSWORD=secret
+        REDIS_HOST=host
+        REDIS_USERNAME=user
+    ```
+
+    or comment
+
+    ```bash
+        @app.post("/api/chat", response_model=ChatResponse)
+        @rate_limiter(max_calls=1, time_frame=20)
+        async def chat(request: Request,payload: ChatRequest):
+    ```
+
+6. Run the application
  `vicorn main:app --reload`
 
-  
+
 
 ### Setup Frontend
 
@@ -52,5 +67,5 @@ Built with NextJS(frontend) and FastAPI(backend)
 3. Run the application
     - `npm run dev` or `yarn dev` or `pnpm dev`
 
-  
+
 4. Open your browser and navigate to `http://localhost:3000` to see the application in action.
