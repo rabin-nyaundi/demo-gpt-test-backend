@@ -39,7 +39,7 @@ def health():
 
 
 @app.post("/api/chat", response_model=ChatResponse)
-@rate_limiter(max_calls=1, time_frame=20)
+@rate_limiter(max_calls=10, time_frame=3600)
 async def chat(request: Request,payload: ChatRequest):
     """ chat endpoint.
     Body:
