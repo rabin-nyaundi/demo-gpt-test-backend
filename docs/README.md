@@ -43,10 +43,6 @@ Built with NextJS(frontend) and FastAPI(backend)
 
 3. Copy `.env.example` to `.env.local`
 
-    - Fill the OpenAI API key value
-
-   
-
 ```bash
   NEXT_PUBLIC_ENVIRONMENT=development
   NEXT_PUBLIC_DEV_BACKEND_URL=http://localhost:8000/api
